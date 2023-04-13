@@ -1,0 +1,94 @@
+.container {
+    position: relative;
+}
+.table {
+    border-collapse: collapse;
+    width: 100%;
+  
+    th,
+    td {
+      border: 1px solid #dee2e6;
+      padding: 0.75rem;
+      text-align: center;
+    }
+  
+    th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+  
+    tbody tr:hover {
+      background-color: #f2f2f2;
+    }
+  }
+  
+.modalDialog {
+    position: absolute;
+    border: black solid 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 500px;
+    background-color: white;
+  }
+  
+  .modalContent {
+    border-radius: 0;
+  }
+  
+  .modalHeader {
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .modalForm {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .modalTitle {
+    font-weight: bold;
+  }
+  
+  .modalBody {
+    padding: 1rem;
+  }
+  
+  .modalFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #dee2e6;
+    padding: 1rem;
+  }
+  
+  .btn {
+    border-radius: 0;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .btnSecondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+  
+    &:hover {
+      background-color: #5a6268;
+      border-color: #545b62;
+    }
+  }
+  
+  .btnPrimary {
+    background-color: #007bff;
+    border-color: #007bff;
+  
+    &:hover {
+      background-color: #0069d9;
+      border-color: #0062cc;
+    }
+  }
+  
