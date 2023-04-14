@@ -1,9 +1,9 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import CryptoDetails from "./components/CryptoDetails/CryptoDetails";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import CryptoDetailsPage from "./pages/CryptoDetailsPage/CryptoDetailsPage";
 import HomePage from "./pages/HomePage/HomePage";
 
-const App = () => {
+const App: React.FC = () => {
   return (
    
         <Router>
@@ -12,7 +12,7 @@ const App = () => {
               <HomePage />           
             </Route>
             <Route path="/cryptos/:id">
-              <CryptoDetails />
+              <CryptoDetailsPage />
             </Route>
           </Switch>
         </Router>

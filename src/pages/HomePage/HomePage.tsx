@@ -4,6 +4,7 @@ import styles from "./HomePage.module.scss";
 import classNames from "classnames";
 import Portfolio from "../../components/Portfolio/Portfolio";
 import { Link } from "react-router-dom";
+import { floatToFixed } from "../../helpers/FloatToFixed";
 
 export interface ICryptoItem {
   amount: string;
@@ -16,6 +17,9 @@ export interface ICryptoItem {
   changePercent24Hr: string;
 }
 
+const coinCapUrl = "https://api.coincap.io/v2/assets?limit=10&offset=";
+const pages = Array.from(Array(10).keys());
+
 const HomePage = () => {
 
     const [cryptos, setCryptos] = useState([]);
@@ -23,18 +27,20 @@ const HomePage = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedCrypto, setSelectedCrypto] = useState<ICryptoItem | null>(null);
     const [amount, setAmount] = useState("");
+    const [offset, setOffset] = useState(0);
   
-    useEffect(() => {
-      const fetchData = async () => {
-        const result = await axios.get(
-          'https://api.coincap.io/v2/assets?limit=10'
-        );
-        setCryptos(result.data.data);
-      };
-      fetchData();
-      const intervalId = setInterval(fetchData, 10000); // Refresh data every 10 seconds
+    const fetchData = async (urlString: string, offset: number) => {
+      const result = await axios.get(
+        `${urlString}${offset}`
+      );
+      setCryptos(result.data.data);
+    };
+
+    useEffect(() => {      
+      fetchData(coinCapUrl, offset);
+      const intervalId = setInterval(() => fetchData(coinCapUrl, offset), 10000); // Refresh data every 10 seconds
       return () => clearInterval(intervalId);
-    }, []);
+    }, [offset]);
   
   
     useEffect(() => {
@@ -67,6 +73,12 @@ const HomePage = () => {
       handleModalClose();
     };
 
+    const handlePageClick = async (pageNumber: number) => {
+      const offset = pageNumber * 10;
+      setOffset(offset);
+      await fetchData(coinCapUrl, offset);
+    }
+
     return (
         <div className={styles.container}>
             <table className={styles.table}>
@@ -89,9 +101,9 @@ const HomePage = () => {
                     <Link to={`/cryptos/${crypto.id}`}>{crypto.name}</Link>
                 </td>
                 <td>{crypto.symbol}</td>
-                <td>{`$${parseFloat(crypto.priceUsd).toFixed(2)}`}</td>
-                <td>{`$${parseFloat(crypto.marketCapUsd).toFixed(2)}`}</td>
-                <td>{`${parseFloat(crypto.changePercent24Hr).toFixed(2)}%`}</td>
+                <td>{`$${floatToFixed(crypto.priceUsd, 2)}`}</td>
+                <td>{`$${floatToFixed(crypto.marketCapUsd, 2)}`}</td>
+                <td>{`${floatToFixed(crypto.changePercent24Hr, 2)}%`}</td>
                 <td>
                     <button onClick={() => handleAddToPortfolio(crypto)}>
                     Add
@@ -101,6 +113,13 @@ const HomePage = () => {
             ))}
             </tbody>
         </table>
+        <div className={styles.paginationContainer}>
+        {
+          pages.map((page) => (
+            <button key={page} onClick={() => handlePageClick(page)} className={classNames(styles.btn, styles.pageBtn)}>{page + 1}</button>
+          ))
+        }
+        </div>
         <Portfolio portfolio = {portfolio}/>
         {showModal && (
             <div className={styles.modalDialog}>
@@ -111,10 +130,11 @@ const HomePage = () => {
             <div className={styles.modalBody}>
             {selectedCrypto && (                
                 <form className={styles.modalForm}>                
-                    <label>
+                    <label htmlFor="selectCryptoAmount">
                         Amount of {selectedCrypto.name}
                     </label>
                     <input
+                        id="selectCryptoAmount"
                         type="number"
                         step="0.0001"
                         min="0"
