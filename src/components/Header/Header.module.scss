@@ -1,0 +1,51 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #2747afc0;
+    color: #fff;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  
+    .title {
+      margin: 0;
+      font-size: 2rem;
+      text-align: center;
+    }
+  
+    .topCoins {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+  
+      .coin {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 1.5rem;
+        font-size: 0.9rem;
+  
+        .name {
+          font-size: 1.2rem;
+          font-weight: bold;
+          margin-bottom: 0.5rem;
+        }
+  
+        .symbol {
+          font-size: 1.1rem;
+          margin-bottom: 0.25rem;
+        }
+  
+        .priceUsd {
+          font-size: 0.8rem;
+          color: #ffffff;
+        }
+      }
+    }
+
+    .icon {
+        width: 4rem;
+        height: 4rem;   
+    }
+  }
+  

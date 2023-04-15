@@ -7,17 +7,6 @@
   text-align: center;
 }
 
-.pageBtn {
-  font-size: 1.5rem;
-  padding: 0.2rem 0.5rem;
-  margin-right: 0.5rem;
-  width: 3rem;
-  
-  &:hover {
-    background-color: lightgray;
-  }
-} 
-
 .table {
     border-collapse: collapse;
     width: 100%;
@@ -87,6 +76,7 @@
     border-radius: 0;
     font-weight: bold;
     text-transform: uppercase;
+    background-color: rgb(188, 78, 78);
     cursor: pointer;
   }
   
@@ -109,4 +99,15 @@
       border-color: #0062cc;
     }
   }
+
+  .pageBtn {
+  font-size: 1.5rem;
+  padding: 0.2rem 0.5rem;
+  margin-right: 0.5rem;
+  width: 3rem;
+  background-color: white;
   
+  &:hover {
+    background-color: lightgray;
+  }
+} 

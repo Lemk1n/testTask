@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import CryptoDetailsPage from "./pages/CryptoDetailsPage/CryptoDetailsPage";
 import HomePage from "./pages/HomePage/HomePage";
+import "./App.scss";
 
 const App: React.FC = () => {
   return (

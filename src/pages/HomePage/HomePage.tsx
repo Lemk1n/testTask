@@ -5,6 +5,7 @@ import classNames from "classnames";
 import Portfolio from "../../components/Portfolio/Portfolio";
 import { Link } from "react-router-dom";
 import { floatToFixed } from "../../helpers/FloatToFixed";
+import Header from "../../components/Header/Header";
 
 export interface ICryptoItem {
   amount: string;
@@ -28,6 +29,7 @@ const HomePage = () => {
     const [selectedCrypto, setSelectedCrypto] = useState<ICryptoItem | null>(null);
     const [amount, setAmount] = useState("");
     const [offset, setOffset] = useState(0);
+    const [isPortfolioOpened, setIsPortfolioOpened] = useState(false);
   
     const fetchData = async (urlString: string, offset: number) => {
       const result = await axios.get(
@@ -45,6 +47,28 @@ const HomePage = () => {
   
     useEffect(() => {
       localStorage.setItem("portfolio", JSON.stringify(portfolio));
+      const fetchPortfolioData = async () => {
+        const ids = portfolio.map(currency => currency.id).join(',');
+        const response = await axios.get(
+          `https://api.coincap.io/v2/assets?ids=${ids}`
+        );
+        const updatedPortfolio = portfolio.map(currency => {
+          const updatedCurrency = response.data.data.find(
+            data => data.id === currency.id
+          );
+          return {
+            ...currency,
+            priceUsd: updatedCurrency.priceUsd,
+            changePercent24Hr: updatedCurrency.changePercent24Hr
+          };
+        });
+        setPortfolio(updatedPortfolio);
+      };
+      if (portfolio.length > 0) {
+        fetchPortfolioData();
+        const intervalId = setInterval(() => fetchPortfolioData(), 10000); // Refresh data every 10 seconds
+        return () => clearInterval(intervalId);
+      }
     }, [portfolio]);
   
     const handleAddToPortfolio = (crypto) => {
@@ -67,10 +91,20 @@ const HomePage = () => {
         alert('Please enter an amount.');
         return;
       }
-      const crypto = { ...selectedCrypto };
-      crypto.amount = amount;
-      setPortfolio([...portfolio, crypto]);
-      handleModalClose();
+      const existingCurrency = portfolio.find((c) => c.id === selectedCrypto.id);
+      if (existingCurrency) {
+        const updatedPortfolio = portfolio.map((c) => {
+          if (c.id === selectedCrypto.id) {
+            return { ...c, amount: parseFloat(c.amount) + parseFloat(amount) };
+          } else {
+            return c;
+          }
+        });
+        setPortfolio(updatedPortfolio);
+      } else {
+        setPortfolio([...portfolio, { ...selectedCrypto, amount }]);
+      }
+      handleModalClose();      
     };
 
     const handlePageClick = async (pageNumber: number) => {
@@ -80,7 +114,10 @@ const HomePage = () => {
     }
 
     return (
+      <>
+        <Header setIsPortfolioOpened = {setIsPortfolioOpened}/>
         <div className={styles.container}>
+            
             <table className={styles.table}>
             <thead>
             <tr>
@@ -120,7 +157,7 @@ const HomePage = () => {
           ))
         }
         </div>
-        <Portfolio portfolio = {portfolio}/>
+        {isPortfolioOpened && <Portfolio setPortfolio={setPortfolio} setIsPortfolioOpened={setIsPortfolioOpened} portfolio={portfolio}/>}
         {showModal && (
             <div className={styles.modalDialog}>
             <div className={styles.modalHeader}>
@@ -156,6 +193,7 @@ const HomePage = () => {
         </div>
         )}        
     </div>
+    </>
     )
 }
 
