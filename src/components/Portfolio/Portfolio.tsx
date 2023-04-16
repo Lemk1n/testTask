@@ -12,6 +12,8 @@ const Portfolio = ({portfolio, setIsPortfolioOpened, setPortfolio}) => {
         updatedPortfolio.splice(i, 1);
         setPortfolio(updatedPortfolio);
     }
+
+    //console.log(portfolio[0].startPrice);
     
     return (
         <div className={styles.overlay}>    
@@ -21,33 +23,35 @@ const Portfolio = ({portfolio, setIsPortfolioOpened, setPortfolio}) => {
                     <button className={styles.btn} onClick={handleModalClose}>x</button>
                 </h2>
                 {portfolio.length ? (
-                    <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Symbol</th>
-                            <th>Price</th>
-                            <th>Change (24h)</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {portfolio.map((crypto, i) => (
-                            <tr key={crypto.id}>
-                                <td>{crypto.name}</td>
-                                <td>{crypto.symbol}</td>
-                                <td>{`$${(parseFloat(crypto.priceUsd) * parseFloat(crypto.amount)).toFixed(2)}`}</td>
-                                <td>{`${parseFloat(crypto.changePercent24Hr).toFixed(2)}%`}</td>
-                                <td>{crypto.amount}</td>
-                                <td>
-                                <button className={styles.btn} onClick={() => handleRemoveFromPortfolio(i)}>
-                                Remove
-                                </button>
-                                </td>
+                    <div className={styles.wrapper}>
+                        <table className={styles.table}>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Symbol</th>
+                                <th>Price</th>
+                                <th>Change (24h)</th>
+                                <th>Amount</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {portfolio.map((crypto, i) => (
+                                <tr key={crypto.id}>
+                                    <td>{crypto.name}</td>
+                                    <td>{crypto.symbol}</td>
+                                    <td>{`$${(parseFloat(crypto.priceUsd) * parseFloat(crypto.amount)).toFixed(2)}`}</td>
+                                    <td>{`${parseFloat(crypto.changePercent24Hr).toFixed(2)}%`}</td>
+                                    <td>{crypto.amount}</td>
+                                    <td>
+                                    <button className={styles.btn} onClick={() => handleRemoveFromPortfolio(i)}>
+                                    Remove
+                                    </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
                 ) : (
                 <div className={styles.noItemsPlaceholder}>There no items in portfolio yet.</div>
                     )}                

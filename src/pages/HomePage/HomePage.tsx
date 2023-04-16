@@ -38,15 +38,17 @@ const HomePage = () => {
       setCryptos(result.data.data);
     };
 
+    useEffect(() => {
+      localStorage.setItem("portfolio", JSON.stringify(portfolio));
+    }, [portfolio]);
+
     useEffect(() => {      
       fetchData(coinCapUrl, offset);
       const intervalId = setInterval(() => fetchData(coinCapUrl, offset), 10000); // Refresh data every 10 seconds
       return () => clearInterval(intervalId);
-    }, [offset]);
+    }, [offset]);  
   
-  
-    useEffect(() => {
-      localStorage.setItem("portfolio", JSON.stringify(portfolio));
+    useEffect(() => {            
       const fetchPortfolioData = async () => {
         const ids = portfolio.map(currency => currency.id).join(',');
         const response = await axios.get(
@@ -66,10 +68,8 @@ const HomePage = () => {
       };
       if (portfolio.length > 0) {
         fetchPortfolioData();
-        const intervalId = setInterval(() => fetchPortfolioData(), 10000); // Refresh data every 10 seconds
-        return () => clearInterval(intervalId);
       }
-    }, [portfolio]);
+    }, []);
   
     const handleAddToPortfolio = (crypto) => {
       setSelectedCrypto(crypto);
@@ -102,7 +102,7 @@ const HomePage = () => {
         });
         setPortfolio(updatedPortfolio);
       } else {
-        setPortfolio([...portfolio, { ...selectedCrypto, amount }]);
+        setPortfolio([...portfolio, { ...selectedCrypto, amount, startPrice: selectedCrypto.priceUsd }]);
       }
       handleModalClose();      
     };
@@ -115,9 +115,9 @@ const HomePage = () => {
 
     return (
       <>
-        <Header setIsPortfolioOpened = {setIsPortfolioOpened}/>
+        <Header portfolio={portfolio} setIsPortfolioOpened = {setIsPortfolioOpened}/>
         <div className={styles.container}>
-            
+          <div className={styles.wrapper}>  
             <table className={styles.table}>
             <thead>
             <tr>
@@ -149,7 +149,8 @@ const HomePage = () => {
                 </tr>
             ))}
             </tbody>
-        </table>
+            </table>
+          </div>
         <div className={styles.paginationContainer}>
         {
           pages.map((page) => (

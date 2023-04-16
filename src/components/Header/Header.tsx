@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { floatToFixed } from '../../helpers/FloatToFixed';
 import styles from './Header.module.scss';
@@ -13,7 +13,7 @@ interface ICoin {
     priceUsd: string;
 }
 
-const Header = ({setIsPortfolioOpened}) => {
+const Header = ({setIsPortfolioOpened, portfolio}) => {
   const [topCoins, setTopCoins] = useState<ICoin[]>([]);
 
   useEffect(() => {
@@ -35,6 +35,24 @@ const Header = ({setIsPortfolioOpened}) => {
       return () => clearInterval(intervalId);
   }, []);
 
+  const portfolioTotalPrice = useMemo(() => {
+    let startTotal = 0;
+    let total = 0;
+    portfolio.forEach((currency) => {
+      total += currency.priceUsd * currency.amount;
+      startTotal += currency.startPrice * currency.amount;
+    })
+    return { total, startTotal };
+  }, [portfolio]);
+
+  const priceDifference = useMemo(() => {
+    const { total, startTotal } = portfolioTotalPrice;
+    const difference = total - startTotal;
+    const percentage = 100 * difference / total;
+    const sign = difference > 0 && "+";
+    return { sign, difference, percentage };
+  }, [portfolioTotalPrice]);
+
   return (
     <header className={styles.header}>
       <h1 className={styles.title}>Cryptocurrency Table</h1>
@@ -47,7 +65,15 @@ const Header = ({setIsPortfolioOpened}) => {
           </div>
         ))}
       </div>
-      <img className={styles.icon} src={`${publicUrl}/assets/portfolio.svg`} alt="Portfolio" onClick={() => setIsPortfolioOpened(true)} />
+      <div className={styles.portfolioWrapper}>
+        <img className={styles.icon} src={`${publicUrl}/assets/portfolio.svg`} alt="Portfolio" onClick={() => setIsPortfolioOpened(true)} />
+        {portfolio.length && (
+          <>
+            <div>${portfolioTotalPrice.total.toFixed(2)}</div>
+            <div>{priceDifference.sign}{priceDifference.difference.toFixed(2)} ({priceDifference.percentage.toFixed(2)}%)</div>
+          </>
+        )}       
+      </div>
     </header>
   );
 };
