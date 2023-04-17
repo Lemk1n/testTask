@@ -38,6 +38,9 @@ const Header = ({setIsPortfolioOpened, portfolio}) => {
   const portfolioTotalPrice = useMemo(() => {
     let startTotal = 0;
     let total = 0;
+    if(!portfolio.length) {
+      return {};
+    }
     portfolio.forEach((currency) => {
       total += currency.priceUsd * currency.amount;
       startTotal += currency.startPrice * currency.amount;

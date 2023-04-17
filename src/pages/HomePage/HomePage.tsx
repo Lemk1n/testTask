@@ -24,7 +24,11 @@ const pages = Array.from(Array(10).keys());
 const HomePage = () => {
 
     const [cryptos, setCryptos] = useState([]);
-    const [portfolio, setPortfolio] = useState([...JSON.parse(localStorage.getItem('portfolio') || '')]);
+    const [portfolio, setPortfolio] = useState (() => { 
+      const savedItem = localStorage.getItem("portfolio"); 
+     const parsedItem = JSON.parse(savedItem); 
+     return parsedItem || ""; 
+     });
     const [showModal, setShowModal] = useState(false);
     const [selectedCrypto, setSelectedCrypto] = useState<ICryptoItem | null>(null);
     const [amount, setAmount] = useState("");
@@ -37,6 +41,13 @@ const HomePage = () => {
       );
       setCryptos(result.data.data);
     };
+    
+    useEffect(() => { 
+      const portfolio = JSON.parse(localStorage.getItem('portfolio')) || []; 
+      if (portfolio) { 
+        setPortfolio(portfolio); 
+      } 
+    }, []);
 
     useEffect(() => {
       localStorage.setItem("portfolio", JSON.stringify(portfolio));
